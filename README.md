@@ -1,9 +1,11 @@
 ﻿# GoVnc
 
 GoVnc是使用go+阿里云oss实现对屏幕（截屏）进行监控。截屏后进行实时上传操作，从而达到屏幕监控的效果。
+如果要长期监控可以加入到开启启动项，计划任务等；
 
-仅供学习使用，请勿用作非法用途！
-详细使用：https://www.yuque.com/pantom/web/txcveqczgc3h8at2
+**仅供学习使用，请勿用作非法用途！**
+
+**详细使用**：https://www.yuque.com/pantom/web/txcveqczgc3h8at2
 
 ## 工具使用
 
