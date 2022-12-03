@@ -68,7 +68,7 @@ func uploadingfile(str1 []string, Seconds int) {
 	s := gocron.NewScheduler(timezone)
 
 	// 每秒执行一次
-	s.Every(10).Seconds().Do(func() {
+	s.Every(Seconds).Seconds().Do(func() {
 		screen()                                           //截屏
 		uploadoss(str1[3], str1[1], str1[2], str1[0], dir) //上传
 	})
