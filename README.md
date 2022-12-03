@@ -7,6 +7,13 @@ GoVnc是使用go+阿里云oss实现对屏幕（截屏）进行监控。截屏后
 
 ## 工具使用
 
+### 下载：
+```
+git clone https://github.com/pantom2077/GoVnc.git
+cd .\GoVnc\
+go build
+```
+
 ### 参数
 
 ```bash
