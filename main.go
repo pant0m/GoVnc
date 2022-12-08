@@ -103,6 +103,25 @@ func aotu(str1 []string, Seconds int) {
 	}
 }
 
+func getsize() bool {
+	// fmt.Println(temp)
+	fileInfo, err := os.Stat(getdir())
+	if err != nil {
+		fmt.Println(err)
+	}
+	temp2 := fileInfo.Size()
+	if temp == temp2 {
+		// fmt.Println("大小相同")
+		return false
+
+	} else {
+		temp = temp2
+		return true
+	}
+	// fmt.Println(fileInfo.Size())
+
+}
+
 func init() {
 	eg := `
     /$$$$$$            /$$    /$$                    
@@ -136,24 +155,5 @@ func main() {
 		uploadingfile(str1, Seconds)
 	}
 	// getsize()
-
-}
-
-func getsize() bool {
-	// fmt.Println(temp)
-	fileInfo, err := os.Stat(getdir())
-	if err != nil {
-		fmt.Println(err)
-	}
-	temp2 := fileInfo.Size()
-	if temp == temp2 {
-		// fmt.Println("大小相同")
-		return false
-
-	} else {
-		temp = temp2
-		return true
-	}
-	// fmt.Println(fileInfo.Size())
 
 }
