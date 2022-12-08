@@ -14,6 +14,8 @@ import (
 	"github.com/vova616/screenshot"
 )
 
+var temp int64 = 0
+
 func screen() {
 	img, err := screenshot.CaptureScreen()
 	if err != nil {
@@ -70,8 +72,10 @@ func uploadingfile(str1 []string, Seconds int) {
 	defer t.Stop()
 	for {
 		<-t.C
-		screen()
-		uploadoss(str1[3], str1[1], str1[2], str1[0], getdir())
+		if getsize() {
+			screen()
+			uploadoss(str1[3], str1[1], str1[2], str1[0], getdir())
+		}
 	}
 }
 
@@ -83,9 +87,12 @@ func aotu(str1 []string, Seconds int) {
 		if e.State != 0 {
 			screen()
 			time.Sleep(1 * time.Second)
-			uploadoss(str1[3], str1[1], str1[2], str1[0], getdir())
-			time.Sleep(time.Duration(Seconds) * time.Second)
-		} else {
+			if getsize() {
+				uploadoss(str1[3], str1[1], str1[2], str1[0], getdir())
+				time.Sleep(time.Duration(Seconds) * time.Second)
+			}
+
+		} else if getsize() {
 			screen()
 			time.Sleep(1 * time.Second)
 			uploadoss(str1[3], str1[1], str1[2], str1[0], getdir())
@@ -128,5 +135,25 @@ func main() {
 	} else if auto == false && osskey != "" {
 		uploadingfile(str1, Seconds)
 	}
+	// getsize()
+
+}
+
+func getsize() bool {
+	// fmt.Println(temp)
+	fileInfo, err := os.Stat(getdir())
+	if err != nil {
+		fmt.Println(err)
+	}
+	temp2 := fileInfo.Size()
+	if temp == temp2 {
+		// fmt.Println("大小相同")
+		return false
+
+	} else {
+		temp = temp2
+		return true
+	}
+	// fmt.Println(fileInfo.Size())
 
 }
